@@ -12,20 +12,22 @@ import {
 import { Plus, Edit, Trash2 } from "lucide-react";
 
 const CustomerCard = ({ customer, onEdit, onDelete }) => (
-  <div className="bg-white rounded-xl shadow p-4 flex flex-col justify-between hover:shadow-2xl transition">
-    <h3 className="font-bold text-lg">{customer.name}</h3>
-    <p className="text-gray-600">{customer.email}</p>
-    <p className="text-gray-500">{customer.phone}</p>
+  <div className="bg-white rounded-xl shadow p-4 flex flex-col justify-between hover:shadow-2xl transition w-full max-w-sm mx-auto">
+    <h3 className="font-bold text-base sm:text-lg truncate">{customer.name}</h3>
+    <p className="text-gray-600 text-sm sm:text-base break-all">
+      {customer.email}
+    </p>
+    <p className="text-gray-500 text-sm sm:text-base">{customer.phone}</p>
     <div className="mt-4 flex space-x-2">
       <button
         onClick={() => onEdit(customer)}
-        className="flex-1 flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded transition"
+        className="flex-1 flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded text-sm sm:text-base transition"
       >
         <Edit className="w-4 h-4 mr-1" /> Edit
       </button>
       <button
         onClick={() => onDelete(customer.id)}
-        className="flex-1 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded transition"
+        className="flex-1 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm sm:text-base transition"
       >
         <Trash2 className="w-4 h-4 mr-1" /> Hapus
       </button>
@@ -106,59 +108,67 @@ export default function DashboardCustomers() {
   };
 
   const inputClass =
-    "flex-1 border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500";
+    "flex-1 border rounded px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 w-full";
   const buttonClass =
-    "flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition";
+    "flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm sm:text-base transition w-full sm:w-auto";
+  const cancelButtonClass =
+    "flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm sm:text-base transition w-full sm:w-auto";
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6 max-w-7xl mx-auto">
       <form
         onSubmit={saveCustomer}
-        className="bg-white rounded-xl shadow p-6 flex flex-col sm:flex-row gap-4 items-center"
+        className="bg-white rounded-xl shadow p-4 sm:p-6 flex flex-col gap-4 w-full max-w-3xl mx-auto"
       >
-        <input
-          type="text"
-          placeholder="Customer Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className={inputClass}
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className={inputClass}
-        />
-        <input
-          type="tel"
-          placeholder="Phone"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          className={inputClass}
-        />
-        <button type="submit" className={buttonClass}>
-          <Plus className="w-5 h-5 mr-2" /> {editId ? "Update" : "Add"}
-        </button>
-        {editId && (
-          <button
-            type="button"
-            onClick={() => {
-              setEditId(null);
-              setName("");
-              setEmail("");
-              setPhone("");
-            }}
-            className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded transition"
-          >
-            Cancel
+        <div className="flex flex-col sm:flex-row gap-4">
+          <input
+            type="text"
+            placeholder="Customer Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className={inputClass}
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={inputClass}
+          />
+          <input
+            type="tel"
+            placeholder="Phone"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className={inputClass}
+          />
+        </div>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <button type="submit" className={buttonClass}>
+            <Plus className="w-5 h-5 mr-2" /> {editId ? "Update" : "Add"}
           </button>
-        )}
+          {editId && (
+            <button
+              type="button"
+              onClick={() => {
+                setEditId(null);
+                setName("");
+                setEmail("");
+                setPhone("");
+              }}
+              className={cancelButtonClass}
+            >
+              Cancel
+            </button>
+          )}
+        </div>
       </form>
 
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {customers.length === 0 && (
-          <p className="text-gray-500 col-span-full">Belum ada customer</p>
+          <p className="text-gray-500 col-span-full text-center text-sm sm:text-base">
+            Belum ada customer
+          </p>
         )}
         {customers.map((c) => (
           <CustomerCard

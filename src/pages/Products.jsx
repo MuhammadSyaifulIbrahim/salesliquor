@@ -11,20 +11,22 @@ import {
 } from "firebase/firestore";
 
 const ProductCard = ({ product, onEdit, onDelete }) => (
-  <div className="bg-white rounded-xl shadow p-4 flex flex-col justify-between hover:shadow-2xl transition">
-    <h3 className="font-bold text-lg">{product.name}</h3>
-    <p className="text-gray-600">Rp {product.price.toLocaleString()}</p>
-    <p className="text-gray-500">Stock: {product.stock}</p>
+  <div className="bg-white rounded-xl shadow p-4 flex flex-col justify-between hover:shadow-2xl transition w-full max-w-sm mx-auto">
+    <h3 className="font-bold text-lg sm:text-xl truncate">{product.name}</h3>
+    <p className="text-gray-600 text-sm sm:text-base">
+      Rp {product.price.toLocaleString()}
+    </p>
+    <p className="text-gray-500 text-sm sm:text-base">Stock: {product.stock}</p>
     <div className="mt-4 flex space-x-2">
       <button
         onClick={() => onEdit(product)}
-        className="flex-1 flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded transition"
+        className="flex-1 flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded text-sm sm:text-base transition"
       >
         Edit
       </button>
       <button
         onClick={() => onDelete(product.id)}
-        className="flex-1 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded transition"
+        className="flex-1 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm sm:text-base transition"
       >
         Hapus
       </button>
@@ -100,43 +102,47 @@ export default function DashboardProducts() {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6 max-w-7xl mx-auto">
       <form
         onSubmit={addProduct}
-        className="bg-white rounded-xl shadow p-6 flex flex-col sm:flex-row gap-4 items-center"
+        className="bg-white rounded-xl shadow p-4 sm:p-6 flex flex-col gap-4 w-full max-w-3xl mx-auto"
       >
-        <input
-          type="text"
-          placeholder="Product Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="border rounded px-3 py-2"
-        />
-        <input
-          type="number"
-          placeholder="Price"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          className="border rounded px-3 py-2"
-        />
-        <input
-          type="number"
-          placeholder="Stock"
-          value={stock}
-          onChange={(e) => setStock(e.target.value)}
-          className="border rounded px-3 py-2"
-        />
+        <div className="flex flex-col sm:flex-row gap-4">
+          <input
+            type="text"
+            placeholder="Product Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="border rounded px-3 py-2 w-full text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="number"
+            placeholder="Price"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            className="border rounded px-3 py-2 w-full text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="number"
+            placeholder="Stock"
+            value={stock}
+            onChange={(e) => setStock(e.target.value)}
+            className="border rounded px-3 py-2 w-full text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
         <button
           type="submit"
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded w-full sm:w-auto text-sm sm:text-base transition"
         >
           {editId ? "Update" : "Add"}
         </button>
       </form>
 
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {products.length === 0 && (
-          <p className="text-gray-500 col-span-full">Belum ada produk</p>
+          <p className="text-gray-500 col-span-full text-center text-sm sm:text-base">
+            Belum ada produk
+          </p>
         )}
         {products.map((p) => (
           <ProductCard

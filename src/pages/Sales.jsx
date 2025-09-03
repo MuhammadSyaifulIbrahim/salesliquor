@@ -14,15 +14,15 @@ import { Plus, Trash2 } from "lucide-react";
 const ProductButton = ({ product, onAdd }) => (
   <button
     onClick={() => onAdd(product)}
-    className="border p-2 rounded hover:bg-gray-100 w-full text-left"
+    className="border p-2 rounded hover:bg-gray-100 w-full text-left text-sm sm:text-base truncate"
   >
     {product.name} - Rp {product.price.toLocaleString()}
   </button>
 );
 
 const CartItem = ({ item, onRemove }) => (
-  <div className="flex justify-between items-center border-b py-2">
-    <div>
+  <div className="flex justify-between items-center border-b py-2 text-sm sm:text-base">
+    <div className="truncate">
       {item.name} x {item.qty}
     </div>
     <div>Rp {item.subtotal.toLocaleString()}</div>
@@ -57,7 +57,19 @@ export default function DashboardSales() {
     fetchInitialData();
 
     const unsubscribe = onSnapshot(salesRef, (snapshot) => {
-      setSales(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
+      const currentMonth = new Date().getMonth();
+      const currentYear = new Date().getFullYear();
+      const filteredSales = snapshot.docs
+        .map((d) => ({ id: d.id, ...d.data() }))
+        .filter((sale) => {
+          const saleDate = sale.createdAt?.toDate();
+          return (
+            saleDate &&
+            saleDate.getMonth() === currentMonth &&
+            saleDate.getFullYear() === currentYear
+          );
+        });
+      setSales(filteredSales);
     });
     return () => unsubscribe();
   }, []);
@@ -101,7 +113,6 @@ export default function DashboardSales() {
         createdAt: serverTimestamp(),
       });
 
-      // Update stok produk
       await Promise.all(
         cart.map((item) =>
           updateDoc(doc(productsRef, item.id), { stock: item.stock - item.qty })
@@ -118,15 +129,17 @@ export default function DashboardSales() {
   };
 
   const inputClass =
-    "border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-indigo-500";
+    "border p-2 w-full rounded text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500";
   const buttonClass =
-    "bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition";
+    "bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm sm:text-base transition w-full sm:w-auto";
 
   return (
-    <div className="p-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow p-6">
-          <h2 className="font-semibold mb-4">Pilih Customer</h2>
+    <div className="p-4 sm:p-6 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <div className="bg-white rounded-xl shadow p-4 sm:p-6">
+          <h2 className="font-semibold mb-4 text-sm sm:text-base">
+            Pilih Customer
+          </h2>
           <select
             value={selectedCustomer}
             onChange={(e) => setSelectedCustomer(e.target.value)}
@@ -140,24 +153,28 @@ export default function DashboardSales() {
             ))}
           </select>
 
-          <h2 className="font-semibold mt-6 mb-2">Pilih Produk:</h2>
-          <div className="grid grid-cols-2 gap-2">
+          <h2 className="font-semibold mt-6 mb-2 text-sm sm:text-base">
+            Pilih Produk:
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {products.map((p) => (
               <ProductButton key={p.id} product={p} onAdd={addToCart} />
             ))}
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow p-6 flex flex-col">
-          <h2 className="font-semibold mb-4">Keranjang</h2>
+        <div className="bg-white rounded-xl shadow p-4 sm:p-6 flex flex-col">
+          <h2 className="font-semibold mb-4 text-sm sm:text-base">Keranjang</h2>
           {cart.length === 0 ? (
-            <p className="text-gray-500 text-center">Keranjang kosong</p>
+            <p className="text-gray-500 text-center text-sm sm:text-base">
+              Keranjang kosong
+            </p>
           ) : (
             <>
               {cart.map((item) => (
                 <CartItem key={item.id} item={item} onRemove={removeFromCart} />
               ))}
-              <div className="mt-4 font-bold">
+              <div className="mt-4 font-bold text-sm sm:text-base">
                 Total: Rp{" "}
                 {cart.reduce((sum, i) => sum + i.subtotal, 0).toLocaleString()}
               </div>
@@ -170,20 +187,34 @@ export default function DashboardSales() {
       </div>
 
       <div className="mt-6">
-        <h2 className="font-semibold mb-4">Riwayat Transaksi</h2>
+        <h2 className="font-semibold mb-4 text-sm sm:text-base">
+          Riwayat Transaksi
+        </h2>
         {sales.length === 0 ? (
-          <p className="text-gray-500">Belum ada transaksi</p>
+          <p className="text-gray-500 text-center text-sm sm:text-base">
+            Belum ada transaksi
+          </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {sales.map((s) => (
               <div key={s.id} className="bg-white rounded-xl shadow p-4">
-                <p className="text-gray-700 mb-2">
+                <p className="text-gray-700 mb-2 text-sm sm:text-base">
                   Customer:{" "}
                   {customers.find((c) => c.id === s.customerId)?.name ||
                     "Unknown"}
                 </p>
-                <p className="text-gray-700 mb-2">Items: {s.items?.length}</p>
-                <p className="font-bold">
+                <div className="text-gray-700 mb-2 text-sm sm:text-base">
+                  Items:
+                  <ul className="list-disc pl-5">
+                    {s.items?.map((item, index) => (
+                      <li key={index}>
+                        {item.name} x {item.qty} - Rp{" "}
+                        {item.subtotal.toLocaleString()}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <p className="font-bold text-sm sm:text-base">
                   Total: Rp {s.total?.toLocaleString()}
                 </p>
               </div>
