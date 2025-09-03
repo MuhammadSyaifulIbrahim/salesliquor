@@ -14,8 +14,6 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-
-// Import halaman
 import Products from "./Products";
 import Customers from "./Customers";
 import Sales from "./Sales";
@@ -61,7 +59,6 @@ export default function Dashboard() {
         collection(db, `tenants/${tenantId}/sales`)
       );
 
-      // Filter per tanggal jika diisi
       let filteredProducts = productsSnap.docs.map((d) => d.data());
       let filteredCustomers = customersSnap.docs.map((d) => d.data());
       let filteredSales = salesSnap.docs.map((d) => d.data());
@@ -86,7 +83,6 @@ export default function Dashboard() {
         });
       }
 
-      // Hitung total stats
       const totalSales = filteredSales.reduce(
         (acc, s) => acc + (s.total || 0),
         0
@@ -98,7 +94,6 @@ export default function Dashboard() {
         products: filteredProducts.length,
       });
 
-      // Aggregate sales per bulan untuk chart
       const salesPerMonth = {};
       filteredSales.forEach((s) => {
         const date = s.createdAt?.toDate ? s.createdAt.toDate() : new Date();
@@ -121,12 +116,16 @@ export default function Dashboard() {
     fetchStats();
   }, [startDate, endDate]);
 
+  const handleNavClick = (name) => {
+    setActivePage(name);
+    setSidebarOpen(false); // Close sidebar on mobile when a nav item is clicked
+  };
+
   const renderContent = () => {
     switch (activePage) {
       case "Dashboard":
         return (
           <div className="p-6 space-y-6">
-            {/* Stats Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-white rounded-xl shadow p-6 hover:shadow-2xl transition">
                 <h3 className="text-gray-500">Total Sales</h3>
@@ -147,8 +146,6 @@ export default function Dashboard() {
                 </p>
               </div>
             </div>
-
-            {/* Date Filter */}
             <div className="flex flex-col sm:flex-row gap-4 bg-white rounded-xl shadow p-4 items-center">
               <label className="flex items-center">
                 Start Date:
@@ -169,8 +166,6 @@ export default function Dashboard() {
                 />
               </label>
             </div>
-
-            {/* Sales Chart */}
             {salesData.length > 0 ? (
               <div className="bg-white rounded-xl shadow p-6">
                 <h2 className="text-xl font-bold mb-4">Sales Per Month</h2>
@@ -219,18 +214,34 @@ export default function Dashboard() {
 
   return (
     <div className="flex h-screen bg-gray-100">
+      {/* Overlay for mobile sidebar */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-10 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
+
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 bg-gray-900 text-white w-64 p-6 transform ${
+        className={`fixed inset-y-0 left-0 bg-gray-900 text-white w-64 p-6 transform transition-transform duration-300 ease-in-out z-20 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-auto`}
+        } lg:translate-x-0 lg:static lg:inset-auto`}
       >
-        <h2 className="text-2xl font-bold mb-8">Dashboard Sales</h2>
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-2xl font-bold">Dashboard Sales</h2>
+          <button
+            className="lg:hidden text-white"
+            onClick={() => setSidebarOpen(false)}
+          >
+            ✕
+          </button>
+        </div>
         <nav className="space-y-4">
           {navItems.map((item) => (
             <button
               key={item.name}
-              onClick={() => setActivePage(item.name)}
+              onClick={() => handleNavClick(item.name)}
               className={`flex items-center w-full px-4 py-2 rounded-lg transition-colors ${
                 activePage === item.name ? "bg-white/20" : "hover:bg-white/10"
               }`}
@@ -247,7 +258,7 @@ export default function Dashboard() {
         {/* Top Navbar */}
         <div className="flex justify-between items-center bg-white shadow p-4">
           <button
-            className="lg:hidden text-gray-700"
+            className="lg:hidden text-gray-700 text-2xl"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             ☰
